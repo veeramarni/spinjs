@@ -5,6 +5,7 @@ import * as url from 'url';
 import { Builder } from '../Builder';
 import { ConfigPlugin } from '../ConfigPlugin';
 import Spin from '../Spin';
+var nodeExternals = require('webpack-node-externals');
 
 const __WINDOWS__ = /^win/.test(process.platform);
 
@@ -212,18 +213,10 @@ const createConfig = (builder: Builder, spin: Spin) => {
     config = {
       ...config,
       target: 'node',
-      externals: (context, request, callback) => {
-        if (request.indexOf('webpack') < 0 && request.indexOf('babel-polyfill') < 0 && !request.startsWith('.')) {
-          const fullPath = builder.require.probe(request, context);
-          if (fullPath) {
-            const ext = path.extname(fullPath);
-            if (fullPath.indexOf('node_modules') >= 0 && ['.js', '.jsx', '.json'].indexOf(ext) >= 0) {
-              return callback(null, 'commonjs ' + request);
-            }
-          }
-        }
-        return callback();
-      }
+      externals: [
+        nodeExternals({ whitelist: [/webpack\/hot/i, /babel-polyfill/] }),
+        nodeExternals({ modulesDir: path.join(builder.require.cwd, 'node_modules') })
+      ],
     };
     if (builder.sourceMap) {
       config.output = {
