@@ -5,7 +5,7 @@ import * as url from 'url';
 import { Builder } from '../Builder';
 import { ConfigPlugin } from '../ConfigPlugin';
 import Spin from '../Spin';
-var nodeExternals = require('webpack-node-externals');
+let nodeExternals = require('webpack-node-externals');
 
 const __WINDOWS__ = /^win/.test(process.platform);
 
@@ -216,7 +216,7 @@ const createConfig = (builder: Builder, spin: Spin) => {
       externals: [
         nodeExternals({ whitelist: [/webpack\/hot/i, /babel-polyfill/] }),
         nodeExternals({ modulesDir: path.join(builder.require.cwd, 'node_modules') })
-      ],
+      ]
     };
     if (builder.sourceMap) {
       config.output = {
